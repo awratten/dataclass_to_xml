@@ -29,4 +29,7 @@ def dataclass_to_xml(data_class_obj):
     root_element = ET.Element(data_class_obj.__class__.__name__)
     _convert_to_xml(data_class_obj, root_element)
     xml_str = ET.tostring(root_element, encoding='utf-8', method='xml').decode()
+    xml_str = ET.XML(xml_str)
+    ET.indent(xml_str)
+    xml_str = ET.tostring(element, encoding='unicode')
     return xml_str
