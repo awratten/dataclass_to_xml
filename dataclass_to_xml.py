@@ -1,7 +1,6 @@
 import dataclasses
 import xml.etree.ElementTree as ET
-
-from typing import List
+from typing import Optional
 
 def dataclass_to_xml(data_class_obj):
     """
@@ -20,6 +19,9 @@ def dataclass_to_xml(data_class_obj):
         for field in dataclasses.fields(obj):
             field_value = getattr(obj, field.name)
 
+            if field_value is None:
+                continue
+
             if dataclasses.is_dataclass(field_value):
                 sub_element = ET.SubElement(root_element, field.name)
                 _convert_to_xml(field_value, sub_element)
@@ -28,8 +30,9 @@ def dataclass_to_xml(data_class_obj):
 
     root_element = ET.Element(data_class_obj.__class__.__name__)
     _convert_to_xml(data_class_obj, root_element)
+    
     xml_str = ET.tostring(root_element, encoding='utf-8', method='xml').decode()
-    xml_str = ET.XML(xml_str)
-    ET.indent(xml_str)
+    element = ET.XML(xml_str)
+    ET.indent(element)
     xml_str = ET.tostring(element, encoding='unicode')
     return xml_str
